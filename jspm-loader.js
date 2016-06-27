@@ -4,7 +4,11 @@ const Module = require('module')
     , url    = require('url')
     , load   = Module._load
 
-jspm.setPackagePath('..')
+// NOTE(jordan): Robust pjson directory lookup.
+const pjsonLoc = require('find-pkg').sync(process.cwd())
+    , pjsonDir = path.parse(pjsonLoc).dir
+
+jspm.setPackagePath(pjsonDir)
 
 const System = jspm.Loader()
 
@@ -15,7 +19,7 @@ function moduleIsInSystemPaths (name) {
   return systemPath in System.paths
 }
 
-// NOTE(jordan): Shimming Module._load to check jspm_packages.
+// NOTE(jordan): Shim Module._load to check jspm_packages.
 Module._load = (name, m) => {
   // Is the module "special"? (Cannot be looked up in filesystem)
   // Needed this to fix the errors caused by SpecialSystemModules like @system-env
