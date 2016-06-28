@@ -16,7 +16,9 @@ const System = jspm.Loader()
 function moduleIsInSystemPaths (name) {
   let systemPath = path.parse(name).dir + '/'
 
-  return systemPath in System.paths
+  systemPath = systemPath.split('/')[0]
+
+  return systemPath + '/' in System.paths
 }
 
 // NOTE(jordan): Shim Module._load to check jspm_packages.
