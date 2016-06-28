@@ -12,29 +12,20 @@ jspm.setPackagePath(pjsonDir)
 
 const System = jspm.Loader()
 
-// NOTE(jordan): Resolve local project imports correctly.
-function moduleIsInSystemPaths (name) {
-  let systemPath = path.parse(name).dir + '/'
-
-  systemPath = systemPath.split('/')[0]
-
-  return systemPath + '/' in System.paths
-}
-
 // NOTE(jordan): Shim Module._load to check jspm_packages.
 Module._load = (name, m) => {
-  // Is the module "special"? (Cannot be looked up in filesystem)
-  // Needed this to fix the errors caused by SpecialSystemModules like @system-env
-  if (name in System._loader.modules) {
-    return System._loader.modules[name].module
-  }
+  try {
+    return load(name, m)
+  } catch (e) {
+    // Is the module "special"? (Cannot be looked up in filesystem)
+    // Needed this to fix the errors caused by SpecialSystemModules like @system-env
+    if (name in System._loader.modules) {
+      return System._loader.modules[name].module
+    }
 
-  // Is the module a JSPM dependency?
-  if (name in System.map || moduleIsInSystemPaths(name)) {
+    // Module must be a JSPM dependency
     let jspmUri  = System.normalizeSync(name)
     name = url.parse(jspmUri).path
+    return load(name, m)
   }
-
-  // Try first to load a JSPM dep, then try local project, then try NPM.
-  return load(name, m)
 }
