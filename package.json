@@ -1,6 +1,6 @@
 {
   "name": "ava-jspm-loader",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "AVA helper for using JSPM.",
   "main": "jspm-loader.js",
   "scripts": {
