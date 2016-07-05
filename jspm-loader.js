@@ -39,7 +39,7 @@ function jspmHasModule (name) {
     return false
   }
 
-  const possiblePaths = [ name ]
+  const possiblePaths = [ name + '/' ]
   let i = -1
 
   while (~(i = name.lastIndexOf('/'))) {
@@ -50,7 +50,7 @@ function jspmHasModule (name) {
   debug(`[loader:internal] possible paths: ${possiblePaths}`)
 
   return possiblePaths.some(function (p) {
-    return p in System.paths || p in System.map
+    return p in System.paths || p.slice(0, -1) in System.map
   })
 }
 
