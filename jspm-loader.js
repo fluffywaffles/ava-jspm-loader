@@ -14,6 +14,9 @@ const pjsonLoc = require('find-pkg').sync(process.cwd())
     , pjsonDir = path.parse(pjsonLoc).dir
     , pjson    = require(pjsonLoc)
 
+// DEBUG
+debug(`[loader:internal] package.json location: ${pjsonLoc}`)
+
 // NOTE(jordan): Set up JSPM.
 jspm.setPackagePath(pjsonDir)
 
@@ -64,7 +67,9 @@ Module._load = (name, m) => {
   debug(`[loader:internal] jspmHasModule(${name}): ${jspmHasModule(name)}`)
   if ( jspmHasModule(name) ) {
     let jspmUri  = System.normalizeSync(name)
+    debug(`[loader:internal] successfully normalized: ${jspmUri}`)
     name = url.parse(jspmUri).path
+    debug(`[loader:internal] parsed module path: ${name}`)
   }
 
   // Try first to load a JSPM dep, then try local project, then try NPM.
