@@ -68,8 +68,12 @@ Module._load = (name, m) => {
   if ( jspmHasModule(name) ) {
     let jspmUri  = System.normalizeSync(name)
     debug(`[loader:internal] successfully normalized: ${jspmUri}`)
-    name = url.parse(jspmUri).path
-    debug(`[loader:internal] parsed module path: ${name}`)
+    if (~jspmUri.indexOf('nodelibs-')) {
+      debug(`[loader:internal] Detected a "nodelibs" shim. Deferring to node.`)
+    } else {
+      name = url.parse(jspmUri).path
+      debug(`[loader:internal] parsed module path: ${name}`)
+    }
   }
 
   // Try first to load a JSPM dep, then try local project, then try NPM.
